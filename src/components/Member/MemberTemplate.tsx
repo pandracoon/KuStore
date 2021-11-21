@@ -1,4 +1,5 @@
-import React, { ReactElement, useState } from 'react';
+import axios from 'axios';
+import React, { ReactElement, useEffect, useState } from 'react';
 import styled from 'styled-components';
 import Button from '../Button';
 import MemberTable from './MemberTable';
@@ -25,23 +26,78 @@ const MemberTemplateBlock = styled.div`
   }
 `;
 
+type MemberData = {
+  me_id: number;
+  name: string;
+  phone: string;
+  date: string;
+};
+
+type MemberTableData = {
+  me_id: number;
+  name: string;
+  phone: string;
+  date: string;
+  detail: string;
+};
+
+const parsingDate = (date: string) => {
+  return date.split('T')[0];
+};
+
 const MemberTemplate = (): ReactElement => {
   const column = ['ID', '이름', '전화번호', '가입일자', '상세보기'];
-  const data = [
-    { id: 1, name: 'heelo', phone: 'hoho', date: 'fuck' },
-    { id: 2, name: 'heelo', phone: 'hoho', date: 'fuck' },
-  ];
-  const tableData = [];
-  data.forEach((data) => {
-    const url = `./${data.id}`;
-    const det = { detail: url };
-    const obj = Object.assign(data, det);
-    tableData.push(obj);
-  });
-  const [keyword, setkey] = useState(``);
+
+  const stateTable = useState<MemberTableData[]>([
+    {
+      me_id: 0,
+      name: '',
+      phone: '',
+      date: '',
+      detail: '',
+    },
+  ]);
+  const tableData: MemberTableData[] = stateTable[0];
+  const setTableData = stateTable[1];
+  const temp = [];
+
+  const [typeWord, setTypeWord] = useState(``);
+  const [keyword, setKeyword] = useState(``);
+
+  useEffect(() => {
+    const fetchMemeberList = async (): Promise<number> => {
+      try {
+        const url = keyword
+          ? `http://localhost:31413/member/search?name=${keyword}`
+          : `http://localhost:31413/member`;
+        console.log(url);
+        const res = await axios.get(url);
+        const resData = res.data as MemberData[];
+
+        resData.forEach((data) => {
+          const url = `./detail/${data.me_id}`;
+          const det = { detail: url };
+          const obj = Object.assign(data, det);
+          Object.assign(obj, { date: parsingDate(obj.date) });
+          temp.push(obj);
+        });
+
+        setTableData(temp);
+        return 1;
+      } catch (e) {
+        console.log(e);
+      }
+    };
+
+    const a = fetchMemeberList();
+  }, [keyword]);
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setkey(e.target.value);
+    setTypeWord(e.target.value);
+  };
+
+  const onClick = () => {
+    setKeyword(typeWord);
   };
 
   return (
@@ -50,10 +106,14 @@ const MemberTemplate = (): ReactElement => {
         <Button disabled={false} url={'./add'}>
           <p>추가하기</p>
         </Button>
-        <Button disabled={false} url={`/${keyword}`}>
+        <Button disabled={false} func={onClick}>
           <p>검색하기</p>
         </Button>
-        <input onChange={onChange} value={keyword} />
+        <input
+          onChange={onChange}
+          placeholder="이름을 완전히 입력하세요"
+          value={typeWord}
+        />
       </div>
       <MemberTable columns={column} data={tableData} />
     </MemberTemplateBlock>

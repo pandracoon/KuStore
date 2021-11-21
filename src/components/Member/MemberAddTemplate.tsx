@@ -1,4 +1,6 @@
+import axios from 'axios';
 import React, { ReactElement, useState } from 'react';
+import { NavigateFunction } from 'react-router-dom';
 import styled from 'styled-components';
 import Button from '../Button';
 
@@ -36,7 +38,6 @@ const MemberAddTemplate = (): ReactElement => {
   const [inputs, setInputs] = useState({
     name: '',
     phone: '',
-    date: '',
   });
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -46,16 +47,25 @@ const MemberAddTemplate = (): ReactElement => {
       [name]: value, // name 키를 가진 값을 value 로 설정
     });
   };
-  const onClick = () => {
-    console.log(inputs);
+  const onClick = async (navigate: NavigateFunction, url: string) => {
+    try {
+      const res = await axios.post(`http://localhost:31413/member/add`, {
+        name: name,
+        phone: phone,
+      });
+      console.log(res);
+      navigate(url);
+    } catch (e) {
+      console.log(e);
+    }
   };
 
-  const { name, phone, date } = inputs;
+  const { name, phone } = inputs;
 
   return (
     <MemberAddTemplateBlock>
       <div className="header">
-        <Button func={onClick} disabled={false} url={`/`}>
+        <Button navFunc={onClick} disabled={false} url={'/member'}>
           <p>추가하기</p>
         </Button>
       </div>
@@ -67,10 +77,6 @@ const MemberAddTemplate = (): ReactElement => {
         <div>
           <span>전화번호: </span>
           <input name="phone" onChange={onChange} value={phone} />
-        </div>
-        <div>
-          <span>가입날짜: </span>
-          <input name="date" onChange={onChange} value={date} />
         </div>
       </div>
     </MemberAddTemplateBlock>

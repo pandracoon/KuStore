@@ -1,5 +1,5 @@
 import React, { ReactElement } from 'react';
-import { useNavigate } from 'react-router';
+import { NavigateFunction, useNavigate } from 'react-router';
 import styled from 'styled-components';
 
 const StyledButton = styled.button`
@@ -33,20 +33,28 @@ type ButtonProps = {
   children: ReactElement;
   url?: string;
   func?: () => void;
+  navFunc?: (navgate: NavigateFunction, url: string) => Promise<void>;
 };
 
 // eslint-disable-next-line
-const Button = ({ disabled, children, url, func }: ButtonProps) => {
+const Button = ({ disabled, children, url, func, navFunc }: ButtonProps) => {
   const navigate = useNavigate();
-  if (func === undefined)
+
+  if (func === undefined && navFunc === undefined)
     return (
       <StyledButton onClick={() => navigate(url)} disabled={disabled}>
         {children}
       </StyledButton>
     );
-  else
+  else if (url === undefined)
     return (
       <StyledButton onClick={func} disabled={disabled}>
+        {children}
+      </StyledButton>
+    );
+  else
+    return (
+      <StyledButton onClick={() => navFunc(navigate, url)} disabled={disabled}>
         {children}
       </StyledButton>
     );

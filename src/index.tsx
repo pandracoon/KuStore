@@ -21,7 +21,7 @@ ReactDOM.render(
         <Route path="/" element={<App />} />
         <Route path="/member" element={<Member />} />
         <Route path="/member/add" element={<MemberAdd />} />
-        <Route path="/member/:id" element={<MemberDetail />} />
+        <Route path="/member/detail/:id" element={<MemberDetail />} />
         <Route path="/item" element={<Item />} />
         <Route path="/item/add" element={<ItemAdd />} />
         <Route path="/item/:id" element={<ItemDetail />} />

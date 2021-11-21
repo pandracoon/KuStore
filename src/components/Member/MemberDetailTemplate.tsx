@@ -1,4 +1,6 @@
-import React, { ReactElement, useState } from 'react';
+import axios from 'axios';
+import React, { ReactElement, useEffect, useState } from 'react';
+import { NavigateFunction } from 'react-router';
 import styled from 'styled-components';
 import Button from '../Button';
 
@@ -32,7 +34,17 @@ const MemberDetailTemplateBlock = styled.div`
   }
 `;
 
+type DataType = {
+  name: string;
+  phone: string;
+  date: string;
+};
+
 const MemeberDetailTemplate = (): ReactElement => {
+  const path = window.location.pathname;
+  const splited = path.split('/');
+  const pageID = splited[3];
+
   const [inputs, setInputs] = useState({
     name: '',
     phone: '',
@@ -46,24 +58,72 @@ const MemeberDetailTemplate = (): ReactElement => {
       [name]: value, // name 키를 가진 값을 value 로 설정
     });
   };
-  const onClick = () => {
-    console.log(inputs);
+
+  const onClickUpdate = async (navigate: NavigateFunction, url: string) => {
+    try {
+      console.log('here');
+      const res = await axios.post(`http://localhost:31413/member/update`, {
+        id: pageID,
+        name: name,
+        phone: phone,
+      });
+      console.log(res);
+      navigate(url);
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  const onClickDelete = async (navigate: NavigateFunction, url: string) => {
+    try {
+      console.log('here');
+      const res = await axios.post(`http://localhost:31413/member/delete`, {
+        id: pageID,
+      });
+      console.log(res);
+      navigate(url);
+    } catch (e) {
+      console.log(e);
+    }
   };
 
   const { name, phone, date } = inputs;
 
+  useEffect(() => {
+    const fetchMemeberDetail = async (): Promise<number> => {
+      try {
+        const res = await axios.get(
+          `http://localhost:31413/member/detail?id=${pageID}`
+        );
+        const resData = res.data as DataType[];
+        const inputData = {
+          name: resData[0].name,
+          phone: resData[0].phone,
+          date: resData[0].date.split('T')[0],
+        };
+        setInputs(inputData);
+
+        return 1;
+      } catch (e) {
+        console.log(e);
+      }
+    };
+
+    const a = fetchMemeberDetail();
+    console.log(a);
+  }, []);
   return (
     <MemberDetailTemplateBlock>
       <div className="header">
-        <Button disabled={false} url={'./add'}>
+        <Button navFunc={onClickDelete} disabled={false} url={'/member'}>
           <p>삭제하기</p>
         </Button>
-        <Button func={onClick} disabled={false} url={`/`}>
+        <Button navFunc={onClickUpdate} disabled={false} url={`/member`}>
           <p>수정하기</p>
         </Button>
       </div>
       <div className="form">
-        <h4>회원ID: 3</h4>
+        <h4>회원ID: {pageID}</h4>
         <div>
           <span>이름: </span>
           <input name="name" onChange={onChange} value={name} />
@@ -73,8 +133,7 @@ const MemeberDetailTemplate = (): ReactElement => {
           <input name="phone" onChange={onChange} value={phone} />
         </div>
         <div>
-          <span>가입날짜: </span>
-          <input name="date" onChange={onChange} value={date} />
+          <span>가입날짜: {date}</span>
         </div>
       </div>
     </MemberDetailTemplateBlock>
