@@ -28,14 +28,14 @@ const MemberTemplateBlock = styled.div`
 
 type MemberData = {
   me_id: number;
-  name: string;
+  me_name: string;
   phone: string;
   date: string;
 };
 
 type MemberTableData = {
   me_id: number;
-  name: string;
+  me_name: string;
   phone: string;
   date: string;
   detail: string;
@@ -51,7 +51,7 @@ const MemberTemplate = (): ReactElement => {
   const stateTable = useState<MemberTableData[]>([
     {
       me_id: 0,
-      name: '',
+      me_name: '',
       phone: '',
       date: '',
       detail: '',

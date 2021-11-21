@@ -1,4 +1,6 @@
+import axios from 'axios';
 import React, { ReactElement, useState } from 'react';
+import { NavigateFunction } from 'react-router-dom';
 import styled from 'styled-components';
 import Button from '../Button';
 
@@ -34,7 +36,7 @@ const ItemAddTemplateBlock = styled.div`
 
 const ItemAddTemplate = (): ReactElement => {
   const [inputs, setInputs] = useState({
-    name: '',
+    it_name: '',
     price: '',
   });
 
@@ -45,26 +47,35 @@ const ItemAddTemplate = (): ReactElement => {
       [name]: value, // name 키를 가진 값을 value 로 설정
     });
   };
-  const onClick = () => {
-    console.log(inputs);
+  const onClick = async (navigate: NavigateFunction, url: string) => {
+    try {
+      const res = await axios.post(`http://localhost:31413/item/add`, {
+        it_name: it_name,
+        price: price,
+      });
+      console.log(res);
+      navigate(url);
+    } catch (e) {
+      console.log(e);
+    }
   };
 
-  const { name, price } = inputs;
+  const { it_name, price } = inputs;
 
   return (
     <ItemAddTemplateBlock>
       <div className="header">
-        <Button func={onClick} disabled={false} url={`/`}>
+        <Button navFunc={onClick} disabled={false} url={`/item`}>
           <p>추가하기</p>
         </Button>
       </div>
       <div className="form">
         <div>
           <span>이름: </span>
-          <input name="name" onChange={onChange} value={name} />
+          <input name="it_name" onChange={onChange} value={it_name} />
         </div>
         <div>
-          <span>전화번호: </span>
+          <span>가격: </span>
           <input name="price" onChange={onChange} value={price} />
         </div>
       </div>

@@ -36,7 +36,7 @@ const MemberAddTemplateBlock = styled.div`
 
 const MemberAddTemplate = (): ReactElement => {
   const [inputs, setInputs] = useState({
-    name: '',
+    me_name: '',
     phone: '',
   });
 
@@ -50,7 +50,7 @@ const MemberAddTemplate = (): ReactElement => {
   const onClick = async (navigate: NavigateFunction, url: string) => {
     try {
       const res = await axios.post(`http://localhost:31413/member/add`, {
-        name: name,
+        me_name: me_name,
         phone: phone,
       });
       console.log(res);
@@ -60,7 +60,7 @@ const MemberAddTemplate = (): ReactElement => {
     }
   };
 
-  const { name, phone } = inputs;
+  const { me_name, phone } = inputs;
 
   return (
     <MemberAddTemplateBlock>
@@ -72,7 +72,7 @@ const MemberAddTemplate = (): ReactElement => {
       <div className="form">
         <div>
           <span>이름: </span>
-          <input name="name" onChange={onChange} value={name} />
+          <input name="me_name" onChange={onChange} value={me_name} />
         </div>
         <div>
           <span>전화번호: </span>

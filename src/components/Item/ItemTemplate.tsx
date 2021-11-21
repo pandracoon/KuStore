@@ -1,4 +1,5 @@
-import React, { ReactElement, useState } from 'react';
+import axios from 'axios';
+import React, { ReactElement, useEffect, useState } from 'react';
 import styled from 'styled-components';
 import Button from '../Button';
 import ItemTable from './ItemTable';
@@ -25,23 +26,71 @@ const ItemTemplateBlock = styled.div`
   }
 `;
 
+type ItemData = {
+  it_id: number;
+  it_name: string;
+  price: number;
+};
+
+type ItemTableData = {
+  it_id: number;
+  it_name: string;
+  price: number;
+  detail: string;
+};
+
 const ItemTemplate = (): ReactElement => {
   const column = ['ID', '이름', '가격', '상세보기'];
-  const data = [
-    { id: 1, name: 'heelo', price: 'hoho' },
-    { id: 2, name: 'heelo', price: 'hoho' },
-  ];
-  const tableData = [];
-  data.forEach((data) => {
-    const url = `./${data.id}`;
-    const det = { detail: url };
-    const obj = Object.assign(data, det);
-    tableData.push(obj);
-  });
-  const [keyword, setkey] = useState(``);
+
+  const state = useState<ItemTableData[]>([
+    {
+      it_id: 0,
+      it_name: '',
+      price: 0,
+      detail: '',
+    },
+  ]);
+
+  const tableData: ItemTableData[] = state[0];
+  const setTableData = state[1];
+  const temp = [];
+
+  const [typeWord, setTypeWord] = useState(``);
+  const [keyword, setKeyword] = useState(``);
+
+  useEffect(() => {
+    const fetchItemList = async (): Promise<number> => {
+      try {
+        const url = keyword
+          ? `http://localhost:31413/item/search?name=${keyword}`
+          : `http://localhost:31413/item`;
+        console.log(url);
+        const res = await axios.get(url);
+        const resData = res.data as ItemData[];
+
+        resData.forEach((data) => {
+          const url = `./detail/${data.it_id}`;
+          const det = { detail: url };
+          const obj = Object.assign(data, det);
+          temp.push(obj);
+        });
+
+        setTableData(temp);
+        return 1;
+      } catch (e) {
+        console.log(e);
+      }
+    };
+
+    const a = fetchItemList();
+  }, [keyword]);
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setkey(e.target.value);
+    setTypeWord(e.target.value);
+  };
+
+  const onClick = () => {
+    setKeyword(typeWord);
   };
 
   return (
@@ -50,10 +99,14 @@ const ItemTemplate = (): ReactElement => {
         <Button disabled={false} url={'./add'}>
           <p>추가하기</p>
         </Button>
-        <Button disabled={false} url={`/${keyword}`}>
+        <Button disabled={false} func={onClick}>
           <p>검색하기</p>
         </Button>
-        <input onChange={onChange} value={keyword} />
+        <input
+          onChange={onChange}
+          placeholder={'이름을 완전히 입력하세요'}
+          value={typeWord}
+        />
       </div>
       <ItemTable columns={column} data={tableData} />
     </ItemTemplateBlock>

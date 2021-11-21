@@ -18,7 +18,7 @@ type MemberTableProps = {
 
 type MemberData = {
   me_id: number;
-  name: string;
+  me_name: string;
   phone: string;
   date: string;
   detail: string;
@@ -35,10 +35,10 @@ const MemberTable = ({ columns, data }: MemberTableProps): ReactElement => {
         </tr>
       </thead>
       <tbody>
-        {data.map(({ me_id, name, phone, date, detail }) => (
+        {data.map(({ me_id, me_name, phone, date, detail }) => (
           <tr key={me_id}>
             <MemberTableTd>{me_id}</MemberTableTd>
-            <MemberTableTd>{name}</MemberTableTd>
+            <MemberTableTd>{me_name}</MemberTableTd>
             <MemberTableTd>{phone}</MemberTableTd>
             <MemberTableTd>{date}</MemberTableTd>
             <MemberTableTd>

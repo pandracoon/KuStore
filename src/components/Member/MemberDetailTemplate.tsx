@@ -35,7 +35,7 @@ const MemberDetailTemplateBlock = styled.div`
 `;
 
 type DataType = {
-  name: string;
+  me_name: string;
   phone: string;
   date: string;
 };
@@ -46,7 +46,7 @@ const MemeberDetailTemplate = (): ReactElement => {
   const pageID = splited[3];
 
   const [inputs, setInputs] = useState({
-    name: '',
+    me_name: '',
     phone: '',
     date: '',
   });
@@ -64,7 +64,7 @@ const MemeberDetailTemplate = (): ReactElement => {
       console.log('here');
       const res = await axios.post(`http://localhost:31413/member/update`, {
         id: pageID,
-        name: name,
+        me_name: me_name,
         phone: phone,
       });
       console.log(res);
@@ -87,7 +87,7 @@ const MemeberDetailTemplate = (): ReactElement => {
     }
   };
 
-  const { name, phone, date } = inputs;
+  const { me_name, phone, date } = inputs;
 
   useEffect(() => {
     const fetchMemeberDetail = async (): Promise<number> => {
@@ -97,7 +97,7 @@ const MemeberDetailTemplate = (): ReactElement => {
         );
         const resData = res.data as DataType[];
         const inputData = {
-          name: resData[0].name,
+          me_name: resData[0].me_name,
           phone: resData[0].phone,
           date: resData[0].date.split('T')[0],
         };
@@ -126,7 +126,7 @@ const MemeberDetailTemplate = (): ReactElement => {
         <h4>회원ID: {pageID}</h4>
         <div>
           <span>이름: </span>
-          <input name="name" onChange={onChange} value={name} />
+          <input name="me_name" onChange={onChange} value={me_name} />
         </div>
         <div>
           <span>전화번호: </span>

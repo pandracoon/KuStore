@@ -17,9 +17,9 @@ type ItemTableProps = {
 };
 
 type ItemData = {
-  id: number;
-  name: string;
-  price: string;
+  it_id: number;
+  it_name: string;
+  price: number;
   detail: string;
 };
 
@@ -34,10 +34,10 @@ const ItemTable = ({ columns, data }: ItemTableProps): ReactElement => {
         </tr>
       </thead>
       <tbody>
-        {data.map(({ id, name, price, detail }) => (
-          <tr key={id}>
-            <ItemTableTd>{id}</ItemTableTd>
-            <ItemTableTd>{name}</ItemTableTd>
+        {data.map(({ it_id, it_name, price, detail }) => (
+          <tr key={it_id}>
+            <ItemTableTd>{it_id}</ItemTableTd>
+            <ItemTableTd>{it_name}</ItemTableTd>
             <ItemTableTd>{price}</ItemTableTd>
             <ItemTableTd>
               <Link to={detail}>상세보기</Link>
