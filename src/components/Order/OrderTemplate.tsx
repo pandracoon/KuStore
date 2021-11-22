@@ -1,4 +1,5 @@
-import React, { ReactElement, useState } from 'react';
+import axios from 'axios';
+import React, { ReactElement, useEffect, useState } from 'react';
 import styled from 'styled-components';
 import Button from '../Button';
 import OrderTable from './OrderTable';
@@ -25,6 +26,29 @@ const OrderTemplateBlock = styled.div`
   }
 `;
 
+type OrderData = {
+  or_id: number;
+  me_id: number;
+  it_id: number;
+  me_name: string;
+  it_name: string;
+  time: string;
+  amount: number;
+  total_price: number;
+};
+
+type OrderTableData = {
+  or_id: number;
+  me_id: number;
+  it_id: number;
+  me_name: string;
+  it_name: string;
+  time: string;
+  amount: number;
+  total_price: number;
+  detail: string;
+};
+
 const OrderTemplate = (): ReactElement => {
   const column = [
     'ID',
@@ -35,47 +59,80 @@ const OrderTemplate = (): ReactElement => {
     '주문일시',
     '상세보기',
   ];
-  const data = [
+  const stateTable = useState<OrderTableData[]>([
     {
-      id: 1,
-      me_name: 'heelo',
-      it_name: 'hoho',
-      amount: 'fuck',
-      price: 30000,
-      date: 'oh',
+      or_id: 0,
+      me_id: 0,
+      it_id: 0,
+      me_name: '',
+      it_name: '',
+      time: '',
+      amount: 0,
+      total_price: 0,
+      detail: '',
     },
-    {
-      id: 2,
-      me_name: 'heelo',
-      it_name: 'hoho',
-      amount: 'fuck',
-      price: 30000,
-      date: 'oh',
-    },
-  ];
-  const tableData = [];
-  data.forEach((data) => {
-    const url = `./${data.id}`;
-    const det = { detail: url };
-    const obj = Object.assign(data, det);
-    tableData.push(obj);
-  });
-  const [keyword, setkey] = useState(``);
+  ]);
+  const tableData: OrderTableData[] = stateTable[0];
+  const setTableData = stateTable[1];
+  const temp = [];
 
-  const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setkey(e.target.value);
+  const [typeWord, setTypeWord] = useState(``);
+  const [keyword, setKeyword] = useState(``);
+
+  const parsingDate = (date: string) => {
+    return date.split('T')[0];
   };
 
+  useEffect(() => {
+    const fetchOrderList = async (): Promise<number> => {
+      try {
+        const url = keyword
+          ? `http://localhost:31413/order/search?name=${keyword}`
+          : `http://localhost:31413/order`;
+        console.log(url);
+        const res = await axios.get(url);
+        const resData = res.data as OrderData[];
+
+        resData.forEach((data) => {
+          const url = `./detail/${data.or_id}`;
+          const det = { detail: url };
+          const obj = Object.assign(data, det);
+          Object.assign(obj, { time: parsingDate(obj.time) });
+          temp.push(obj);
+        });
+
+        setTableData(temp);
+        return 1;
+      } catch (e) {
+        console.log(e);
+      }
+    };
+
+    const a = fetchOrderList();
+    console.log(a);
+  }, [keyword]);
+
+  const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setTypeWord(e.target.value);
+  };
+
+  const onClick = () => {
+    setKeyword(typeWord);
+  };
   return (
     <OrderTemplateBlock>
       <div className="header">
         <Button disabled={false} url={'./add'}>
           <p>추가하기</p>
         </Button>
-        <Button disabled={false} url={`/${keyword}`}>
+        <Button disabled={false} func={onClick}>
           <p>검색하기</p>
         </Button>
-        <input onChange={onChange} value={keyword} />
+        <input
+          onChange={onChange}
+          placeholder="주문자를 완전히 입력하세요"
+          value={typeWord}
+        />
       </div>
       <OrderTable columns={column} data={tableData} />
     </OrderTemplateBlock>

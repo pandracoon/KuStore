@@ -90,6 +90,7 @@ const MemberTemplate = (): ReactElement => {
     };
 
     const a = fetchMemeberList();
+    console.log(a);
   }, [keyword]);
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {

@@ -44,6 +44,12 @@ const Header = (): ReactElement => {
         <Link className="link" to="/">
           홈
         </Link>
+        <Link className="link" to="/inventory">
+          재고
+        </Link>
+        <Link className="link" to="/membership">
+          멤버쉽
+        </Link>
         <Link className="link" to="/order">
           주문
         </Link>{' '}

@@ -17,12 +17,14 @@ type OrderTableProps = {
 };
 
 type OrderData = {
-  id: number;
+  or_id: number;
+  me_id: number;
+  it_id: number;
   me_name: string;
   it_name: string;
+  time: string;
   amount: number;
-  price: number;
-  date: string;
+  total_price: number;
   detail: string;
 };
 
@@ -37,19 +39,21 @@ const OrderTable = ({ columns, data }: OrderTableProps): ReactElement => {
         </tr>
       </thead>
       <tbody>
-        {data.map(({ id, me_name, it_name, amount, price, date, detail }) => (
-          <tr key={id}>
-            <OrderTableTd>{id}</OrderTableTd>
-            <OrderTableTd>{me_name}</OrderTableTd>
-            <OrderTableTd>{it_name}</OrderTableTd>
-            <OrderTableTd>{amount}</OrderTableTd>
-            <OrderTableTd>{price}</OrderTableTd>
-            <OrderTableTd>{date}</OrderTableTd>
-            <OrderTableTd>
-              <Link to={detail}>상세보기</Link>
-            </OrderTableTd>
-          </tr>
-        ))}
+        {data.map(
+          ({ or_id, me_name, it_name, amount, total_price, time, detail }) => (
+            <tr key={or_id}>
+              <OrderTableTd>{or_id}</OrderTableTd>
+              <OrderTableTd>{me_name}</OrderTableTd>
+              <OrderTableTd>{it_name}</OrderTableTd>
+              <OrderTableTd>{amount}</OrderTableTd>
+              <OrderTableTd>{total_price}</OrderTableTd>
+              <OrderTableTd>{time}</OrderTableTd>
+              <OrderTableTd>
+                <Link to={detail}>상세보기</Link>
+              </OrderTableTd>
+            </tr>
+          )
+        )}
       </tbody>
     </OrderTableBlock>
   );

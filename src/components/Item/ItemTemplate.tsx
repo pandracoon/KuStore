@@ -83,6 +83,7 @@ const ItemTemplate = (): ReactElement => {
     };
 
     const a = fetchItemList();
+    console.log(a);
   }, [keyword]);
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
