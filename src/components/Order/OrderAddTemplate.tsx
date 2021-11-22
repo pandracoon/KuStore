@@ -2,18 +2,19 @@ import axios from 'axios';
 import React, { ReactElement, useState } from 'react';
 import { NavigateFunction } from 'react-router-dom';
 import styled from 'styled-components';
+import api from '../../api';
 import Button from '../Button';
 
 const OrderAddTemplateBlock = styled.div`
   width: 512px;
   height: 768px;
 
-  position: relative; /* 추후 박스 하단에 추가 버튼을 위치시키기 위한 설정 */
+  position: relative;
   background: white;
   border-radius: 16px;
   box-shadow: 0 0 8px 0 rgba(0, 0, 0, 0.04);
 
-  margin: 0 auto; /* 페이지 중앙에 나타나도록 설정 */
+  margin: 0 auto;
 
   margin-bottom: 32px;
   display: flex;
@@ -54,32 +55,26 @@ const OrderAddTemplate = (): ReactElement => {
 
   const onChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     try {
-      const { value, name } = e.target; // 우선 e.target 에서 name 과 value 를 추출
+      const { value, name } = e.target;
       setInputs({
-        ...inputs, // 기존의 input 객체를 복사한 뒤
-        [name]: value, // name 키를 가진 값을 value 로 설정
+        ...inputs,
+        [name]: value,
       });
 
       if (name == 'me_id') {
-        const res = await axios.get(
-          `http://localhost:31413/member/detail?id=${value}`
-        );
+        const res = await axios.get(`${api}/member/detail?id=${value}`);
         const resData = res.data as DataType[];
         const temp = resData[0].me_name;
         setMeName(temp);
         if (it_name !== '' && Number(amount) > 0) setDisable(false);
       } else if (name == 'it_id') {
-        const res = await axios.get(
-          `http://localhost:31413/item/detail?id=${value}`
-        );
+        const res = await axios.get(`${api}/item/detail?id=${value}`);
         const resData = res.data as DataType[];
         const temp = resData[0].it_name;
         setItName(temp);
         if (me_name !== '' && Number(amount) > 0) setDisable(false);
       } else {
-        const res = await axios.get(
-          `http://localhost:31413/item/detail?id=${it_id}`
-        );
+        const res = await axios.get(`${api}/item/detail?id=${it_id}`);
         const resData = res.data as DataType[];
         const temp = resData[0].price * Number(value);
         setPrice(temp);

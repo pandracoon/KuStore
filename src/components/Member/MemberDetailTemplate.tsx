@@ -2,18 +2,19 @@ import axios from 'axios';
 import React, { ReactElement, useEffect, useState } from 'react';
 import { NavigateFunction } from 'react-router';
 import styled from 'styled-components';
+import api from '../../api';
 import Button from '../Button';
 
 const MemberDetailTemplateBlock = styled.div`
   width: 512px;
   height: 768px;
 
-  position: relative; /* 추후 박스 하단에 추가 버튼을 위치시키기 위한 설정 */
+  position: relative;
   background: white;
   border-radius: 16px;
   box-shadow: 0 0 8px 0 rgba(0, 0, 0, 0.04);
 
-  margin: 0 auto; /* 페이지 중앙에 나타나도록 설정 */
+  margin: 0 auto;
 
   margin-bottom: 32px;
   display: flex;
@@ -52,17 +53,17 @@ const MemeberDetailTemplate = (): ReactElement => {
   });
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { value, name } = e.target; // 우선 e.target 에서 name 과 value 를 추출
+    const { value, name } = e.target;
     setInputs({
-      ...inputs, // 기존의 input 객체를 복사한 뒤
-      [name]: value, // name 키를 가진 값을 value 로 설정
+      ...inputs,
+      [name]: value,
     });
   };
 
   const onClickUpdate = async (navigate: NavigateFunction, url: string) => {
     try {
       console.log('here');
-      const res = await axios.post(`http://localhost:31413/member/update`, {
+      const res = await axios.post(`${api}/member/update`, {
         id: pageID,
         me_name: me_name,
         phone: phone,
@@ -77,7 +78,7 @@ const MemeberDetailTemplate = (): ReactElement => {
   const onClickDelete = async (navigate: NavigateFunction, url: string) => {
     try {
       console.log('here');
-      const res = await axios.post(`http://localhost:31413/member/delete`, {
+      const res = await axios.post(`${api}/member/delete`, {
         id: pageID,
       });
       console.log(res);
@@ -92,9 +93,7 @@ const MemeberDetailTemplate = (): ReactElement => {
   useEffect(() => {
     const fetchMemeberDetail = async (): Promise<number> => {
       try {
-        const res = await axios.get(
-          `http://localhost:31413/member/detail?id=${pageID}`
-        );
+        const res = await axios.get(`${api}/member/detail?id=${pageID}`);
         const resData = res.data as DataType[];
         const inputData = {
           me_name: resData[0].me_name,

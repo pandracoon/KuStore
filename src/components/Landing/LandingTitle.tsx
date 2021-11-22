@@ -33,7 +33,7 @@ const LandingTitleBlock = styled.div`
     margin-bottom: 30px;
   }
 `;
-//ToDo: div 새로 만들어서 두개만 아래쪽에 달라붙게 하기
+
 type LandingTitleProps = {
   children: ReactElement[];
 };
